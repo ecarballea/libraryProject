@@ -12,6 +12,7 @@ El sistema debe arrancar al menos con dos Lectores, y la Api debe exponer el CRU
 
 ### Carpeta api_documentation:
 Contiene los archivos *openapi.json* y *openapi.yaml* que pueden ser cargados desde https://editor.swagger.io/ para ver la documentación de la api que servirá para desarrolladores móviles. Dentro de la carpeta hay un documento word con una explicacion similar a esta con una imagen de este procedimiento en acción.
+![sds](https://user-images.githubusercontent.com/84036372/177789159-40017682-70bd-4983-9523-292038818add.png)
 
 ### Carpeta DB_library:
 Contiene la Base de Datos del proyecto *libraryproject.sql* almacenada en MySql y creada en phpMyAdmin.
@@ -21,3 +22,6 @@ Contiene los archivos centrales el proyecto.
 
 ### Carpeta api_library:
 Contiene la aplicacion de la api del proyecto.
+
+
+
