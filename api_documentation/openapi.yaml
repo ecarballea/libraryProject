@@ -1,0 +1,330 @@
+openapi: 3.0.1
+info:
+  title: API Biblioteca. Ejercicio práctico Python/DJango/Rest.
+  description: Esta Api se encarga de manejar la base de datos de una Biblioteca que tiene un catálogo de libros existentes, donde solo existe un ejemplar de cada título, un registro de préstamos y un registro de lectores.  La API expone el CRUD completo de libros y además la funcionalidad de realizarle un préstamo a un Lector, dado el Id del libro y el Id del lector.
+  version: 1.0.0
+
+servers:
+- url: http://api_library/v1/
+
+tags:
+- name: books
+  description: Este Endpoint maneja toda la información relacionada con los libros de la Biblioteca.
+- name: borrower
+  description: Este Endpoint maneja toda la información relacionada con los préstamos de la Biblioteca.
+
+paths:
+
+  /books/:
+    get:
+      tags:
+      - books
+      summary: Ofrece un listado de todos los libros existentes en la Biblioteca.
+      responses:
+        200:
+          description: (OK) El registro de libros de la BD Biblioteca se obtuvo correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBookGet'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+    post:
+      tags:
+      - books
+      summary: Inserta la información de un nuevo libro a la BD de la Biblioteca.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BodyBooksPost'
+        required: true
+      responses:
+        201:
+          description: (OK) La informacion del libro se guardó correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBookPost'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+          
+  /books/{id_book}/:
+    get:
+      tags:
+      - books
+      summary: Obtiene la información de un libro de la BD Biblioteca por su id.
+      parameters:
+      - name: id_book
+        in: path
+        description: Id del libro a obtener.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: (OK) La informacion del libro se obtuvo correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBookGet'
+        
+        400:
+          $ref: '#/components/responses/BadRequest'
+        
+        404:
+          $ref: '#/components/responses/NotFound'
+        
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+    put:
+      tags:
+      - books
+      summary: Actuaiza la información existente de un libro en la BD Biblioteca por su id.
+      parameters:
+      - name: id_book
+        in: path
+        description: Id del libro a modificar.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: (OK) La informacion del libro se actualizó correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBookPut'
+        
+        400:
+          $ref: '#/components/responses/BadRequest'
+        
+        404:
+          $ref: '#/components/responses/NotFound'
+        
+        500:
+          $ref: '#/components/responses/ServerError'
+    
+    delete:
+      tags:
+      - books
+      summary: Elimina un libro permanentemente de la BD Biblioteca por su id.
+      parameters:
+      - name: id_book
+        in: path
+        description: Id del libro a eliminar.
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: (OK) El libro se eliminó correctamente.
+        
+        400:
+          $ref: '#/components/responses/BadRequest'
+        
+        404:
+          $ref: '#/components/responses/NotFound'
+        
+        500:
+          $ref: '#/components/responses/ServerError'
+    
+  /borrower/:
+    get:
+      tags:
+      - borrower
+      summary: Ofrece un listado de todos los préstamos registrados en la Biblioteca.
+      responses:
+        200:
+          description: (OK) El registro de préstamos de la BD Biblioteca se obtuvo correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBorrowerGet'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+    post:
+      tags:
+      - borrower
+      summary: Inserta la información de un nuevo préstamo a un lector  en la BD de la Biblioteca, dado el Id del libro y el Id del lector.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BodyBorrowerPost'
+        required: true
+      responses:
+        201:
+          description: (OK) La informacion del préstamo se guardó correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessBorrowerPost'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+        
+components:
+  responses:
+    BadRequest:
+      description: (BadRequest) Los datos enviados son incorrectos o hay datos obligatorios no enviados.
+    ServerError:
+      description: Error en el servidor.
+    NotFound:
+      description: (Not Found) No se econtró la información.
+
+  
+  schemas:
+    BodyBooksPost:
+      type: object
+      properties:
+        title:
+          type: string
+          enum: ["Python"]
+          description: Título del libro
+        isbn:
+          type: string
+          enum: ["8596741425369"]
+          description: ISBN del libro. Máximo 13 caracteres.
+        status:
+          type: boolean
+          enum: [false]
+          description: Estado booleano para saber si el libro está prestado. Por defecto es falso
+    
+    BodyBorrowerPost:
+      type: object
+      properties:
+        reader:
+          type: integer
+          enum: [2]
+          description: Id del lector que se le va a realizar el préstamo.
+        book:
+          type: integer
+          enum: [3]
+          description: Id del libro que va a ser prestado.
+        borrow_date:
+          type: string
+          enum: ["2022-07-07"]
+          description: Fecha en la cual se hizo el préstamo.
+    
+    SuccessBookPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          enum: [37]
+          description: ID que le corresponde al nuevo libro en la BD Biblioteca.
+        title:
+          type: string
+          enum: ['Python/Django']
+          description: Título del libro
+        isbn:
+          type: string
+          enum: ['5205505929879']
+          description: ISBN del libro
+        status:
+          type: boolean
+          enum: [false]
+          description: Estado booleano para saber si el libro está prestado.
+    
+    SuccessBookGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          enum: [1]
+          description: ID que le corresponde al libro consultado en la BD Biblioteca.
+        title:
+          type: string
+          enum: ['Python']
+          description: Título del libro consultado.
+        isbn:
+          type: string
+          enum: ['9789295055025']
+          description: ISBN del libro consultado.
+        status:
+          type: boolean
+          enum: [false]
+          description: Estado booleano para saber si el libro consultado está prestado.
+    
+    SuccessBookPut:
+      type: object
+      properties:
+        id:
+          type: integer
+          enum: [1]
+          description: ID que le corresponde al libro actualizado en la BD Biblioteca.
+        title:
+          type: string
+          enum: ['Python']
+          description: Título actualizado del libro consultado.
+        isbn:
+          type: string
+          enum: ['9789295055025']
+          description: ISBN actualizado del libro consultado.
+        status:
+          type: boolean
+          enum: [false]
+          description: Estado booleano actualizado del libro consultado.
+    
+    SuccessBorrowerGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          enum: [22]
+          description: ID correspondiente al préstamo consultado en la BD Biblioteca.
+        borrow_date:
+          type: string
+          enum: ["2022-07-06"]
+          description: Fecha de préstamos.
+        reader:
+          type: integer
+          enum: [3]
+          description: Id del lector que se le hizo el préstamo.
+        book:
+          type: integer
+          enum: [2]
+          description: Id del libro que fue prestado.
+    
+    SuccessBorrowerPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          enum: [25]
+          description: ID que correspondiente al nuevo préstamo realizado en la BD Biblioteca.
+        borrow_date:
+          type: string
+          enum: ["2022-07-06"]
+          description: Fecha del préstamo en cuestión.
+        reader:
+          type: integer
+          enum: [1]
+          description: Id del lector que se le está haciendo el préstamo.
+        book:
+          type: integer
+          enum: [3]
+          description: Id del libro que está siendo prestado.
+        
+        
