@@ -1,6 +1,6 @@
 # libraryProject
 
-## Orientacion:
+## Orientación:
 Ejercicio práctico Python/DJango/Rest.
 Una biblioteca tiene un catálogo de libros existentes, donde solo existe un ejemplar de cada título, un registro de préstamos y un registro de lectores. Las propiedades de cada entidad serán las mínimas necesarias solo para la realización del ejercicio. 
 1-	Libro (id, nombre, ISBN, estado booleano para saber si el libro está prestado)
